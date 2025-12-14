@@ -1,0 +1,23 @@
+# render.yaml - Configuration for Render.com deployment
+# Just push to GitHub and connect to Render
+
+services:
+  - type: web
+    name: flowstate-contract-scanner
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 4021
+      - key: NODE_ENV
+        value: production
+      - key: WALLET_ADDRESS
+        sync: false  # Set this in Render dashboard
+      - key: NETWORK
+        value: base-sepolia  # Change to "base" for production
+      - key: FACILITATOR_URL
+        value: https://x402.org/facilitator  # Change for production

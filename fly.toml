@@ -1,0 +1,43 @@
+# fly.toml - Configuration for Fly.io deployment
+# Deploy with: fly launch && fly deploy
+
+app = "flowstate-contract-scanner"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "4021"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 4021
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 4021
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.http_checks]]
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/"

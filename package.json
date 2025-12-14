@@ -1,0 +1,24 @@
+{
+  "name": "flowstate-contract-scanner",
+  "version": "1.0.0",
+  "description": "x402-enabled Smart Contract Security Scanner API - Pay per scan with USDC",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Test with: curl http://localhost:4021\""
+  },
+  "keywords": ["x402", "smart-contract", "security", "audit", "solidity", "ethereum", "base", "usdc"],
+  "author": "FlowState AI (flowstateai.agency)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "x402-express": "^1.0.0"
+  }
+}
