@@ -607,13 +607,13 @@ This audit is provided as-is and does not guarantee the complete absence of vuln
 // ===========================================
 // START SERVER
 // ===========================================
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║   FlowState AI - Smart Contract Security Scanner          ║
 ║   x402 Payment-Enabled API Service                        ║
 ╠═══════════════════════════════════════════════════════════╣
-║   Server running on: http://localhost:${PORT}                ║
+║   Server running on: http://0.0.0.0:${PORT}                 ║
 ║   Network: ${NETWORK.padEnd(46)}║
 ║   Wallet: ${WALLET_ADDRESS.slice(0, 10)}...${WALLET_ADDRESS.slice(-6)}                          ║
 ╠═══════════════════════════════════════════════════════════╣
