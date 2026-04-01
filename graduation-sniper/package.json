@@ -1,0 +1,19 @@
+{
+  "name": "graduation-sniper",
+  "version": "0.1.0",
+  "description": "Pump.fun Graduation Sniper Bot — buys at 95-98% bonding curve, sells post-graduation via trailing stop",
+  "type": "module",
+  "main": "graduation-sniper.js",
+  "scripts": {
+    "start": "node graduation-sniper.js",
+    "dev": "node --watch graduation-sniper.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.0",
+    "dotenv": "^16.4.0",
+    "ws": "^8.18.0"
+  }
+}
