@@ -41,12 +41,12 @@ export function validateConfig() {
 
   if (config.solanaRpcUrl.includes('api.mainnet-beta.solana.com')) {
     console.warn(
-      '\x1b[33m[WARN] Using public Solana RPC — rate limits will slow discovery scans.\x1b[0m\n' +
+      '[WARN] Using public Solana RPC — rate limits will slow discovery scans.\n' +
       '       Set SOLANA_RPC_URL to a Helius/QuickNode/Triton endpoint for best results.\n'
     );
   }
 
   if (config.buyAmountSol > 0.5 && config.testMode) {
-    console.warn('\x1b[33m[WARN] BUY_AMOUNT_SOL is high but TEST_MODE=true — no real funds at risk.\x1b[0m');
+    console.warn('[WARN] BUY_AMOUNT_SOL is high but TEST_MODE=true — no real funds at risk.');
   }
 }

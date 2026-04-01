@@ -128,9 +128,8 @@ async function main() {
       });
 
       if (closed) {
-        const pnlStr = closed.pnl >= 0
-          ? `\x1b[32m+${closed.pnl.toFixed(4)}\x1b[0m`
-          : `\x1b[31m${closed.pnl.toFixed(4)}\x1b[0m`;
+        const sign   = closed.pnl >= 0 ? '+' : '';
+        const pnlStr = `${sign}${closed.pnl.toFixed(4)}`;
         dashboard.addEvent(
           `${pos.simulated ? '[SIM] ' : ''}CLOSED ${_short(mint)} — P&L: ${pnlStr} SOL (${closed.pnlPct.toFixed(1)}%) — ${exit.reason}`
         );
@@ -171,8 +170,9 @@ async function main() {
     process.exit(0);
   }
 
-  process.on('SIGINT',  () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  // SIGTERM not available on Windows — wrap to avoid startup error
+  try { process.on('SIGTERM', () => shutdown('SIGTERM')); } catch {}
 
   process.on('unhandledRejection', (reason) => {
     dashboard.addEvent(`Unhandled error: ${String(reason).slice(0, 80)}`);

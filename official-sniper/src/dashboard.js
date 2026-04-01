@@ -1,5 +1,12 @@
+// ── Windows / terminal compatibility ─────────────────────────────────────────
+// Enable ANSI on Windows 10+ (harmless on other platforms)
+if (process.platform === 'win32') {
+  try { process.stdout._handle?.setBlocking?.(true); } catch {}
+}
+const COLORS = process.stdout.hasColors?.() ?? (process.env.TERM !== 'dumb' && process.stdout.isTTY);
+
 // ── ANSI helpers ──────────────────────────────────────────────────────────────
-const C = {
+const C = COLORS ? {
   reset:  '\x1b[0m',
   bold:   '\x1b[1m',
   dim:    '\x1b[2m',
@@ -9,18 +16,18 @@ const C = {
   cyan:   '\x1b[36m',
   white:  '\x1b[37m',
   bgRed:  '\x1b[41m',
-};
+} : Object.fromEntries(
+  ['reset','bold','dim','green','red','yellow','cyan','white','bgRed'].map(k => [k, ''])
+);
 
 const W = 64; // total box width (inner chars between ║)
 
-const LINE   = '═'.repeat(W);
-const BLANK  = ' '.repeat(W);
+const LINE  = '═'.repeat(W);
 
-function box(content)     { return `║${content.padEnd(W)}║`; }
-function header(text)     { return `╠${LINE}╣\n${box(` ${text}`)}`; }
-function divider()        { return `╠${LINE}╣`; }
-function title(text)      { return `╔${LINE}╗\n${box(` ${text}`)}`; }
-function footer()         { return `╚${LINE}╝`; }
+function box(content)  { return `║${content.padEnd(W)}║`; }
+function divider()     { return `╠${LINE}╣`; }
+function title(text)   { return `╔${LINE}╗\n${box(` ${text}`)}`; }
+function footer()      { return `╚${LINE}╝`; }
 
 function pnlColor(val) {
   if (val > 0) return `${C.green}+${val.toFixed(4)} SOL${C.reset}`;
@@ -30,7 +37,7 @@ function pnlColor(val) {
 
 function pct(val) {
   if (val === null || val === undefined) return `${C.dim}--${C.reset}`;
-  const sign = val >= 0 ? '+' : '';
+  const sign  = val >= 0 ? '+' : '';
   const color = val >= 0 ? C.green : C.red;
   return `${color}${sign}${val.toFixed(1)}%${C.reset}`;
 }
@@ -84,8 +91,8 @@ export class Dashboard {
       ? `${C.yellow}${C.bold} [TEST MODE — NO REAL FUNDS] ${C.reset}`
       : `${C.green}${C.bold} [LIVE] ${C.reset}`;
 
-    const uptimeStr  = uptime(Date.now() - this.startTime);
-    const stats      = this.pm.stats;
+    const uptimeStr = uptime(Date.now() - this.startTime);
+    const stats     = this.pm.stats;
 
     lines.push(title(`${C.cyan}${C.bold}GRADUATION SNIPER v0.1.0${C.reset}  ${modeTag}`));
     lines.push(box(`  Uptime: ${uptimeStr}   Daily P&L: ${pnlColor(stats.dailyPnl)}`));
@@ -114,7 +121,7 @@ export class Dashboard {
             ? `${C.yellow}${data.completionPct.toFixed(1)}%${C.reset}`
             : `${data.completionPct.toFixed(1)}%`;
 
-        lines.push(box(`  ${short(mint).padEnd(14)} ${(pctStr).padEnd(20)} ${(solReserves + ' SOL').padEnd(14)}`));
+        lines.push(box(`  ${short(mint).padEnd(14)} ${pctStr.padEnd(20)} ${(solReserves + ' SOL').padEnd(14)}`));
       }
     }
 
@@ -173,8 +180,12 @@ export class Dashboard {
     lines.push(footer());
     lines.push(`  ${C.dim}Ctrl+C to stop${C.reset}`);
 
-    // Clear screen and redraw
-    process.stdout.write('\x1B[2J\x1B[H');
+    // Clear screen — works on Windows Terminal, PowerShell 7+, and Unix
+    if (COLORS) {
+      process.stdout.write('\x1B[2J\x1B[H');
+    } else {
+      process.stdout.write('\n'.repeat(3));
+    }
     process.stdout.write(lines.join('\n') + '\n');
   }
 }
